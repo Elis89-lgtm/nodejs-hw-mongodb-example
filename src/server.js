@@ -5,6 +5,8 @@ import dotenv from 'dotenv';
 import { randomUUID } from 'node:crypto';
 import contactsRouter from './routers/contacts.routes.js';
 import { getEnvVar } from './utils/getEnvVar.js';
+import { errorHandlerMiddlewares } from './middlewares/errorHandler.js';
+import { notFoundHandler } from './middlewares/notFoundHandler.js';
 
 dotenv.config();
 const PORT = Number(getEnvVar('PORT', '3000'));
@@ -23,24 +25,13 @@ export const setupServer = () => {
     next();
   });
   app.use('/contacts', contactsRouter);
+  app.use(errorHandlerMiddlewares);
+  app.use(notFoundHandler);
 
   app.get('/', (req, res) => {
     res.send('The API works! Use /contacts');
   });
 
-  app.use((req, res) => {
-    res.status(404).json({
-      message: 'Not found contact',
-      status: 404,
-    });
-  });
-
-  app.use((err, req, res, next) => {
-    res.status(500).json({
-      message: 'Something went wrong',
-      error: err.message,
-    });
-  });
   app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
   });
