@@ -1,4 +1,3 @@
-import createHttpError from 'http-errors';
 import {
   createContact,
   deleteContactById,
@@ -31,10 +30,8 @@ export const getContactByIdController = async (req, res) => {
 export const createContactController = async (req, res) => {
   const payload = req.body;
   const newContact = await createContact(payload);
-  if (!newContact) {
-    throw createHttpError(500, 'Failed to create contact');
-  }
-  res.status(201).json({
+
+  return res.status(201).json({
     status: 201,
     message: 'Successfully created contact!',
     data: newContact,
@@ -64,9 +61,7 @@ export const upsertContactController = async (req, res) => {
 
 export const deleteContactController = async (req, res) => {
   const { contactId } = req.params;
-  const deletedContact = await deleteContactById(contactId);
-  if (!deletedContact) {
-    throw createHttpError(404, `Contact with id ${contactId}not found`);
-  }
+  await deleteContactById(contactId);
+
   res.status(204).send();
 };

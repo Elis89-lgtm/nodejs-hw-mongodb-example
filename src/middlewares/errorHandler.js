@@ -1,6 +1,10 @@
 export const errorHandlerMiddlewares = (err, req, res, next) => {
-  res.status(500).json({
-    message: 'Something went wrong',
-    error: err.message,
+  if (res.headersSent) {
+    return next(err);
+  }
+  const status = err.status || 500;
+  return res.status(status).json({
+    status,
+    message: status === 500 ? 'Something went wrong' : err.message,
   });
 };
