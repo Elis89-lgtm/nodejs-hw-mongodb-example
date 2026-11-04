@@ -43,7 +43,7 @@ export const getAllContacts = async ({
     Contact.find().merge(contactFiltersConditions).countDocuments().exec(),
   ]);
 
-  const paginationData = createPaginationData(contactsCount, perPage, page);
+  const paginationData = createPaginationData(page, perPage, contactsCount);
 
   return {
     data: contacts,
