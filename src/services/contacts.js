@@ -25,7 +25,7 @@ export const getAllContacts = async ({
       .where('email')
       .regex(new RegExp(filters.email, 'i'));
   }
-  if (filters.isFavourite === 'boolean') {
+  if (typeof filters.isFavourite === 'boolean') {
     contactFiltersConditions.where('isFavourite').equals(filters.isFavourite);
   }
   if (filters.contactType) {
