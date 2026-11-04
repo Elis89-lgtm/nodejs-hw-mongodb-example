@@ -6,9 +6,26 @@ import {
   updateContact,
   upsertContact,
 } from '../services/contacts.js';
+import {
+  parsePaginationParams,
+  parseSortParams,
+  parseFiltersContacts,
+} from '../utils/parse.js';
 
 export const getAllContactsController = async (req, res) => {
-  const contacts = await getAllContacts();
+  const { page, perPage } = parsePaginationParams(req.query);
+  const { sortBy, sortOrder } = parseSortParams(req.query);
+
+  const filters = parseFiltersContacts(req.query);
+
+  const contacts = await getAllContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+
+    filters,
+  });
   res.json({
     status: 200,
     message: 'Successfully found contacts',

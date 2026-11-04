@@ -1,9 +1,54 @@
 import createHttpError from 'http-errors';
 import { Contact } from '../db/models/contact.js';
+import { createPaginationData } from '../utils/createPaginationData.js';
 
-export const getAllContacts = async () => {
-  const contacts = await Contact.find();
-  return contacts;
+export const getAllContacts = async ({
+  page,
+  perPage,
+  sortOrder,
+  sortBy,
+  filters = {},
+}) => {
+  const offset = (page - 1) * perPage;
+  const contactFiltersConditions = Contact.find();
+
+  if (filters.name) {
+    contactFiltersConditions.where('name').regex(new RegExp(filters.name, 'i'));
+  }
+  if (filters.phoneNumber) {
+    contactFiltersConditions
+      .where('phoneNumber')
+      .regex(new RegExp(filters.phoneNumber, 'i'));
+  }
+  if (filters.email) {
+    contactFiltersConditions
+      .where('email')
+      .regex(new RegExp(filters.email, 'i'));
+  }
+  if (filters.isFavourite === 'boolean') {
+    contactFiltersConditions.where('isFavourite').equals(filters.isFavourite);
+  }
+  if (filters.contactType) {
+    contactFiltersConditions.where('contactType').equals(filters.contactType);
+  }
+
+  const [contacts, contactsCount] = await Promise.all([
+    Contact.find()
+      .merge(contactFiltersConditions)
+      .skip(offset)
+      .limit(perPage)
+      .sort({ [sortBy]: sortOrder })
+      .exec(),
+
+    Contact.find().merge(contactFiltersConditions).countDocuments().exec(),
+  ]);
+
+  const paginationData = createPaginationData(contactsCount, perPage, page);
+
+  return {
+    data: contacts,
+    ...paginationData,
+  };
 };
 export const getContactById = async (contactId) => {
   const contact = await Contact.findById(contactId);
@@ -21,6 +66,7 @@ export const createContact = async (payload) => {
 export const updateContact = async (contactId, payload) => {
   const contact = await Contact.findOneAndUpdate({ _id: contactId }, payload, {
     new: true,
+    runValidators: true,
   });
   if (!contact) {
     throw createHttpError(404, 'Contact not found');
@@ -37,6 +83,7 @@ export const upsertContact = async (contactId, payload) => {
     return { isNew: true, contact: await Contact.create(payload) };
   }
 };
+
 export const deleteContactById = async (contactId) => {
   const contact = await Contact.findByIdAndDelete(contactId);
   if (!contact) {
