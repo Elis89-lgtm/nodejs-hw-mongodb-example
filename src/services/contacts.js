@@ -18,7 +18,7 @@ export const getAllContacts = async ({
   if (filters.phoneNumber) {
     contactFiltersConditions
       .where('phoneNumber')
-      .regex(new RegExp(filters.phoneNumber, 'i'));
+      .equals(filters.phoneNumber, 'i');
   }
   if (filters.email) {
     contactFiltersConditions
