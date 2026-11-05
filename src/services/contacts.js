@@ -2,7 +2,6 @@ import createHttpError from 'http-errors';
 import { Contact } from '../db/models/contact.js';
 import { createPaginationData } from '../utils/createPaginationData.js';
 
-const allowedTypes = ['work', 'home', 'personal'];
 export const getAllContacts = async ({
   page,
   perPage,
@@ -34,11 +33,8 @@ export const getAllContacts = async ({
   if (typeof filters.isFavourite === 'boolean') {
     contactFiltersConditions.where('isFavourite').equals(filters.isFavourite);
   }
-  if (filters.contactType && Array.isArray(filters.contactType)) {
-    const validTypes = filters.contactType.filter((type) =>
-      allowedTypes.includes(type),
-    );
-    contactFiltersConditions.where('contactType').in(validTypes);
+  if (filters.contactType) {
+    contactFiltersConditions.where('contactType').equals(filters.contactType);
   }
 
   const [contacts, contactsCount] = await Promise.all([
