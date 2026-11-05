@@ -9,6 +9,7 @@ export const getAllContacts = async ({
   sortBy,
   filters = {},
 }) => {
+  console.log('FILTERS:', filters);
   const offset = (page - 1) * perPage;
   const contactFiltersConditions = Contact.find();
 
