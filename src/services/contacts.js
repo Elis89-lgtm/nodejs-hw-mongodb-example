@@ -16,9 +16,14 @@ export const getAllContacts = async ({
     contactFiltersConditions.where('name').regex(new RegExp(filters.name, 'i'));
   }
   if (filters.phoneNumber) {
+    const escapedPhone = filters.phoneNumber.replace(
+      /[.*+?^${}()|[\]\\]/g,
+      '\\$&',
+    );
+
     contactFiltersConditions
       .where('phoneNumber')
-      .equals(filters.phoneNumber, 'i');
+      .regex(new RegExp(escapedPhone, 'i'));
   }
   if (filters.email) {
     contactFiltersConditions
