@@ -14,12 +14,10 @@ import { updateContactSchema } from '../validation/updateContact.js';
 import { validateMongoDBId } from '../middlewares/validate-mongo-id.js';
 
 const contactsRouter = Router();
+contactsRouter.use('/:contactId', validateMongoDBId('contactId'));
+
 contactsRouter.get('/', getAllContactsController);
-contactsRouter.get(
-  '/:contactId',
-  validateMongoDBId('contactId'),
-  getContactByIdController,
-);
+contactsRouter.get('/:contactId', getContactByIdController);
 contactsRouter.post(
   '/',
   validateBody(createContactSchema),
@@ -27,6 +25,7 @@ contactsRouter.post(
 );
 contactsRouter.patch(
   '/:contactId',
+
   validateBody(updateContactSchema),
   patchContactController,
 );
