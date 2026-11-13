@@ -2,6 +2,7 @@ import createHttpError from 'http-errors';
 import { User } from '../db/models/user.js';
 import bcrypt from 'bcrypt';
 import { Session } from '../db/models/session.js';
+import crypto from 'node:crypto';
 
 const createSession = () => ({
   accessToken: crypto.randomBytes(30).toString('base64'),
