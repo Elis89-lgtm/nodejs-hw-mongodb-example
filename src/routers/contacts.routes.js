@@ -12,8 +12,10 @@ import { createContactSchema } from '../validation/createContact.js';
 import { validateBody } from '../middlewares/validate-body-middleware.js';
 import { updateContactSchema } from '../validation/updateContact.js';
 import { validateMongoDBId } from '../middlewares/validate-mongo-id.js';
+import { authenticate } from '../middlewares/authenticate-middleware.js';
 
 const contactsRouter = Router();
+contactsRouter.use(authenticate);
 contactsRouter.use('/:contactId', validateMongoDBId('contactId'));
 
 contactsRouter.get('/', getAllContactsController);
@@ -25,7 +27,6 @@ contactsRouter.post(
 );
 contactsRouter.patch(
   '/:contactId',
-
   validateBody(updateContactSchema),
   patchContactController,
 );
