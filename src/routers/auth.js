@@ -28,7 +28,7 @@ authRouter.post('/logout', logoutUserController);
 authRouter.post('/refresh', refreshSessionController);
 
 authRouter.post(
-  '/auth/request-reset-password-email',
+  '/request-reset-password-email',
   validateBody(requestResetPasswordEmailValidationSchema),
   requestResetPasswordEmailController,
 );
