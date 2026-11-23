@@ -7,7 +7,7 @@ const mailClient = createTransport({
   host: getEnvVar(ENV_VARS.SMTP_HOST),
   port: Number(getEnvVar(ENV_VARS.SMTP_PORT)),
   auth: {
-    user: getEnvVar(ENV_VARS.CMTP_USER),
+    user: getEnvVar(ENV_VARS.SMTP_USER),
     pass: getEnvVar(ENV_VARS.SMTP_PASS),
   },
 });
